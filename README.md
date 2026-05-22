@@ -64,18 +64,27 @@ The script parses KITTI detection labels with either:
 pip install numpy open3d opencv-python
 ```
 
+`open3d` currently cannot be installed from `pip` on Python 3.13 and newer Python releases. Use Python 3.12 or lower to run this script.
+
 ## Environment Notes
 
 Before importing GUI libraries, the script sets these defaults for better X11 compatibility:
 
 ```bash
+XDG_SESSION_TYPE=x11
 QT_QPA_PLATFORM=xcb
 GDK_BACKEND=x11
 SDL_VIDEODRIVER=x11
 CLUTTER_BACKEND=x11
 ```
 
-This is mainly useful on Wayland desktops where Open3D/OpenCV windows can otherwise be less stable. If you already manage your own GUI environment variables, your shell environment can still override these defaults.
+This is mainly useful on Ubuntu systems running a Wayland desktop session, where the Open3D window can otherwise render incorrectly or behave unstably. In particular, forcing `XDG_SESSION_TYPE=x11`, `GDK_BACKEND=x11`, and `QT_QPA_PLATFORM=xcb` helps Open3D use the X11-compatible path.
+
+The Python script now force-overrides these variables before importing GUI libraries. If Open3D still fails when launching `python3 visualize_kitti_predictions.py` directly, use the provided launcher script instead so the environment is exported by the shell before Python starts:
+
+```bash
+./run_visualizer_x11.sh --input_path /path/to/DATA_ROOT --mode both
+```
 
 ## Usage
 
@@ -83,6 +92,15 @@ Visualize a single sample in both point cloud and image views:
 
 ```bash
 python3 visualize_kitti_predictions.py \
+  --input_path /path/to/DATA_ROOT \
+  --sample-id 002425 \
+  --mode both
+```
+
+Wayland Ubuntu fallback using the launcher script:
+
+```bash
+./run_visualizer_x11.sh \
   --input_path /path/to/DATA_ROOT \
   --sample-id 002425 \
   --mode both

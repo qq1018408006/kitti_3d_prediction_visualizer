@@ -11,10 +11,11 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
-os.environ.setdefault("GDK_BACKEND", "x11")
-os.environ.setdefault("SDL_VIDEODRIVER", "x11")
-os.environ.setdefault("CLUTTER_BACKEND", "x11")
+os.environ["XDG_SESSION_TYPE"] = "x11"
+os.environ["QT_QPA_PLATFORM"] = "xcb"
+os.environ["GDK_BACKEND"] = "x11"
+os.environ["SDL_VIDEODRIVER"] = "x11"
+os.environ["CLUTTER_BACKEND"] = "x11"
 
 try:
     import cv2

@@ -64,18 +64,27 @@ DATA_ROOT/
 pip install numpy open3d opencv-python
 ```
 
+`open3d` 目前无法在 Python 3.13 及更新版本上通过 `pip` 安装，运行这个脚本请使用 Python 3.12 或更低版本。
+
 ## 图形环境说明
 
 脚本在导入图形库之前会自动设置以下环境变量，以提升 X11 兼容性：
 
 ```bash
+XDG_SESSION_TYPE=x11
 QT_QPA_PLATFORM=xcb
 GDK_BACKEND=x11
 SDL_VIDEODRIVER=x11
 CLUTTER_BACKEND=x11
 ```
 
-这主要是为了在 Wayland 桌面环境下更稳定地拉起 Open3D 和 OpenCV 窗口。如果你已经自己配置了图形环境变量，系统环境仍然可以覆盖脚本默认值。
+这主要是为了在使用 Wayland 桌面会话的 Ubuntu 上更稳定地拉起 Open3D 和 OpenCV 窗口。尤其是 Open3D 窗口显示异常时，强制使用 `XDG_SESSION_TYPE=x11`、`GDK_BACKEND=x11` 和 `QT_QPA_PLATFORM=xcb` 往往能让它走 X11 兼容路径。
+
+现在 Python 脚本会在导入图形库前强制覆盖这些环境变量。如果直接运行 `python3 visualize_kitti_predictions.py` 仍然因为 Wayland 出错，建议改用仓库里提供的启动脚本，让 shell 在 Python 进程启动前先导出环境变量：
+
+```bash
+./run_visualizer_x11.sh --input_path /path/to/DATA_ROOT --mode both
+```
 
 ## 基本用法
 
@@ -83,6 +92,15 @@ CLUTTER_BACKEND=x11
 
 ```bash
 python3 visualize_kitti_predictions.py \
+  --input_path /path/to/DATA_ROOT \
+  --sample-id 002425 \
+  --mode both
+```
+
+如果是在 Wayland Ubuntu 上运行失败，可以改用启动脚本：
+
+```bash
+./run_visualizer_x11.sh \
   --input_path /path/to/DATA_ROOT \
   --sample-id 002425 \
   --mode both
